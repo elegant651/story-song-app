@@ -1,34 +1,49 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🎵 StorySong
 
-## Getting Started
+**Tagline:**  
+We’re building a platform that brings transparent ownership and monetization to AI-generated music using Web3.
 
-First, run the development server:
+## 🧠 Problem It Solves
+
+### 🎤 Opaque Ownership  
+Traditional music industry models have long suffered from unclear ownership rights and revenue sharing structures.
+
+### 🤖 AI Evolution  
+With tools like **Suno** and **Udio**, anyone can now generate music that’s nearly indistinguishable from human-made content—ushering in a new wave of music creation.
+
+### ⚖️ Ownership Gap  
+There is currently no easy, trustworthy, and decentralized way to **claim**, **license**, and **trade** ownership of AI-generated music.
+
+While various Web3 projects have attempted to address this issue, none have successfully bridged the gap between creators and transparent monetization. But with AI now capable of producing full-fledged musical content, **ownership and royalty management** for AI-generated works is no longer a niche issue—it's inevitable.
+
+---
+
+## 💡 What We Built
+
+**StorySong** leverages **NFTs and Story chain** to provide:
+
+- Clear ownership of AI-generated tracks  
+- Seamless licensing and royalty configuration  
+- Monetization opportunities for creators and transparency for fans  
+
+Fans can support the musicians behind AI-generated music, and musicians can earn directly through blockchain-based licensing and royalty mechanisms.
+
+---
+
+## ⚙️ Tech Stack
+
+- **Story Protocol SDK (TypeScript)**
+- **Next.js / React**
+- **Rainbowkit**
+- **MUI/TailwindCSS**
+- **Suno (Attempted API Integration)**
+- **Ethers.js / Wagmi for Wallet Connectivity**
+- **Pinata for IPFS Storage**
+
+## 🚀 How to Run Locally
 
 ```bash
+git clone https://github.com/elegant651/story-song-app.git
+cd story-song-app
+npm install
 npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
