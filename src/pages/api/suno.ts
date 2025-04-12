@@ -69,27 +69,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const ids = `${dataId1},${dataId2}`;
     console.log(`ids: ${ids}`);
 
-    let audio_data1;
-    let audio_data2;
+    // let audio_data1;
+    // let audio_data2;
 
-    const dataInfo = await getAudioInformation(ids);
-    audio_data1 = dataInfo[0]
-    audio_data2 = dataInfo[1]
+    // const dataInfo = await getAudioInformation(ids);
+    // audio_data1 = dataInfo[0]
+    // audio_data2 = dataInfo[1]
 
-    // const audio_data1 = {
-    //   id: '849d810a-9cf4-4477-8bf3-de69c40ecc4b',
-    //   title: 'Sky High Dreams',
-    //   image_url: 'https://cdn2.suno.ai/image_849d810a-9cf4-4477-8bf3-de69c40ecc4b.jpeg',
-    //   audio_url: 'https://cdn1.suno.ai/849d810a-9cf4-4477-8bf3-de69c40ecc4b.mp3',
-    //   video_url: 'https://cdn1.suno.ai/849d810a-9cf4-4477-8bf3-de69c40ecc4b.mp4',
-    //   created_at: '2024-10-12T05:53:46.390Z',
-    //   model_name: 'chirp-v3.5',
-    //   status: 'complete',
-    //   gpt_description_prompt: 'Ethereal, Pop-Rock, Piano, Harmonies, Catchy Melodies, Uplifting Rhythm',
-    //   type: 'gen',
-    //   tags: 'piano harmonies catchy melodies pop-rock uplifting rhythm ethereal',
-    //   duration: 138.64
-    // }
+    const audio_data1 = {
+      id: '849d810a-9cf4-4477-8bf3-de69c40ecc4b',
+      title: 'Sky High Dreams',
+      image_url: 'https://cdn2.suno.ai/image_849d810a-9cf4-4477-8bf3-de69c40ecc4b.jpeg',
+      audio_url: 'https://cdn1.suno.ai/849d810a-9cf4-4477-8bf3-de69c40ecc4b.mp3',
+      video_url: 'https://cdn1.suno.ai/849d810a-9cf4-4477-8bf3-de69c40ecc4b.mp4',
+      created_at: '2024-10-12T05:53:46.390Z',
+      model_name: 'chirp-v3.5',
+      status: 'complete',
+      gpt_description_prompt: 'Ethereal, Pop-Rock, Piano, Harmonies, Catchy Melodies, Uplifting Rhythm',
+      type: 'gen',
+      tags: 'piano harmonies catchy melodies pop-rock uplifting rhythm ethereal',
+      duration: 138.64
+    }
 
     return res.json({ result: true, audio_data1 })
   }

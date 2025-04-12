@@ -64,20 +64,20 @@ const OnAssetList: React.FC<Props> = ({ assets, isListed, title }) => {
         )
       },
     },
-    {
-      field: 'price',
-      headerName: `Price`,
-      headerClassName: 'right--header',
-      cellClassName: 'right--cell',
-      flex: 1,
-      renderCell(params: GridRenderCellParams<string>) {
-        return (
-          <Box textAlign={isMobileOnSize ? 'right' : 'left'}>
-            <Typography variant='p_lg'>{params.value} APT</Typography>
-          </Box>
-        )
-      },
-    },
+    // {
+    //   field: 'price',
+    //   headerName: `Price`,
+    //   headerClassName: 'right--header',
+    //   cellClassName: 'right--cell',
+    //   flex: 1,
+    //   renderCell(params: GridRenderCellParams<string>) {
+    //     return (
+    //       <Box textAlign={isMobileOnSize ? 'right' : 'left'}>
+    //         <Typography variant='p_lg'>{params.value} APT</Typography>
+    //       </Box>
+    //     )
+    //   },
+    // },
     // {
     //   field: 'Listing',
     //   headerClassName: 'right--header',

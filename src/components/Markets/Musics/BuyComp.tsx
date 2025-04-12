@@ -2,7 +2,6 @@ import { LoadingSkeleton } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { styled } from '@mui/material/styles'
 import { Box, Button, Typography } from "@mui/material"
-import { getAptBalance } from '~/contract/contracts'
 import { useEffect, useState } from "react"
 import { useSnackbar } from "notistack"
 import Link from "next/link"
@@ -21,21 +20,9 @@ interface Props {
 const BuyComp: React.FC<Props> = ({ nftAddress, listingAddress }) => {
   const { data: wallet } = useWalletClient();
   const { enqueueSnackbar } = useSnackbar()
-  const [myBalance, setMyBalance] = useState(0)
   const { client } = useStory()
   const [txHash, setTxHash] = useState('')
   const router = useRouter()
-
-  const initData = async () => {
-    if (wallet?.account) {
-      const balance = await getAptBalance(wallet?.account?.address)
-      setMyBalance(balance)
-    }
-  }
-
-  useEffect(() => {
-    initData()
-  }, [wallet?.account])
 
   const onBuy = async (listing_object_address: string) => {
     if (!client) return;
@@ -45,7 +32,7 @@ const BuyComp: React.FC<Props> = ({ nftAddress, listingAddress }) => {
       throw new Error("Wallet not connected");
     }
 
-    const childIpId = ''
+    const childIpId = '0xB25609EE9A622F148A7A5e0d2a66a799C5329e41'
     const payRoyalty = await client.royalty.payRoyaltyOnBehalf({
       receiverIpId: childIpId as Address,
       payerIpId: zeroAddress,
@@ -57,7 +44,7 @@ const BuyComp: React.FC<Props> = ({ nftAddress, listingAddress }) => {
       'Transaction Hash': payRoyalty.txHash,
     })
 
-    enqueueSnackbar('Congratulations! Bought this NFT')
+    enqueueSnackbar('Paid royalty')
     setTxHash(payRoyalty.txHash!)
 
     setTimeout(() => {
@@ -71,12 +58,12 @@ const BuyComp: React.FC<Props> = ({ nftAddress, listingAddress }) => {
         <Box display='flex' alignItems='center'>
           <Typography variant='p' color='#C4B5FD'>2 $WIP</Typography>
         </Box>
-        <Box display='flex' alignItems='center' mr='5px'>
+        {/* <Box display='flex' alignItems='center' mr='5px'>
           <Typography variant='p' color='#c5c7d9'>My Balance : </Typography>
           <Typography variant='p' color='#fff'>{myBalance.toLocaleString()} APT</Typography>
-        </Box>
+        </Box> */}
       </TitleOrderDetails>
-      <BuyBtn onClick={() => onBuy(listingAddress)} disabled={!wallet?.account.address}>Buy</BuyBtn>
+      <BuyBtn onClick={() => onBuy(listingAddress)} disabled={!wallet?.account.address}>Pay Royalty</BuyBtn>
       <Link
         href={`https://aeneid.storyscan.xyz/tx/${txHash}`}
         rel="noopener noreferrer"

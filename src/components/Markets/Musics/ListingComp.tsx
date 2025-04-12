@@ -7,7 +7,7 @@ import { getAptBalance } from "~/contract/contracts";
 import { ON_USD } from '~/utils/constants'
 import { LoadingSkeleton } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
-import { useSnackbar } from 'notistack'
+import { enqueueSnackbar, useSnackbar } from 'notistack'
 import { ABI } from '~/contract/abi_marketplace'
 import Link from 'next/link'
 import { useWalletClient, useAccount } from 'wagmi'
@@ -70,40 +70,12 @@ const ListingComp: React.FC<Props> = ({ nftAddress }) => {
     trigger()
   }, [wallet?.account])
 
-  const onListing = async (nftTokenObjectAddr: string, price: number) => {
-    if (!wallet?.account) {
-      throw new Error("Wallet not connected");
-    }
-    if (!price) {
-      throw new Error("Price not set");
-    }
-    // const response = await signAndSubmitTransaction({
-    //   sender: wallet?.account?.address,
-    //   data: {
-    //     function: `${ABI.address}::marketplace::list_with_fixed_price`,
-    //     typeArguments: [APT],
-    //     functionArguments: [nftTokenObjectAddr, price * APT_UNIT],
-    //   },
-    // });
-    // await aptos
-    //   .waitForTransaction({
-    //     transactionHash: response.hash,
-    //   })
-    //   .then(() => {
-    //     console.log("Listed");
-    //     setLoading(false)
-    //   });
-
-    // setTxHash(response.hash)
-    snackbar.enqueueSnackbar('Listed')
-  };
-
   const onConfirm = async () => {
     try {
       setLoading(true)
 
       // console.log('nftAddress', nftAddress)
-      await onListing(nftAddress, amountOnusd)
+      // await onListing(nftAddress, amountOnusd)
       // await listNFT(account, nftAddress, amountOnusd)
 
       // if (data.result) {
@@ -125,18 +97,48 @@ const ListingComp: React.FC<Props> = ({ nftAddress }) => {
     try {
       setLoading(true)
 
-      const childIpId = ''
+      const childIpId = '0xB25609EE9A622F148A7A5e0d2a66a799C5329e41'
       const childClaimRevenue = await client.royalty.claimAllRevenue({
         ancestorIpId: childIpId as Address,
-        claimer: wallet?.account.address as Address,
+        claimer: childIpId as Address,
         childIpIds: [],
         royaltyPolicies: [],
         currencyTokens: [WIP_TOKEN_ADDRESS],
       })
       console.log('Child claimed revenue:', childClaimRevenue.claimedTokens)
+      setLoading(false)
     } catch (err) {
       console.error(err)
       setLoading(false)
+    }
+  }
+
+  const onClaimParent = async () => {
+    if (!client) return;
+    if (!wallet?.account) {
+      throw new Error("Wallet not connected");
+    }
+
+    try {
+      setLoading(true)
+
+      const RoyaltyPolicyLAP: Address = '0xBe54FB168b3c982b7AaE60dB6CF75Bd8447b390E'
+      const parentIpId = '0x55e733c020A74bF7e2544DDCa5475c3d2c844EE7'
+      const childIpId = '0xB25609EE9A622F148A7A5e0d2a66a799C5329e41'
+      const childClaimRevenue = await client.royalty.claimAllRevenue({
+        ancestorIpId: parentIpId as Address,
+        claimer: parentIpId as Address,
+        childIpIds: [childIpId as Address],
+        royaltyPolicies: [RoyaltyPolicyLAP],
+        currencyTokens: [WIP_TOKEN_ADDRESS],
+      })
+      console.log('Parent claimed revenue receipt::', childClaimRevenue.claimedTokens)
+      setLoading(false)
+      enqueueSnackbar('Parent claimed revenue receipt', { variant: 'success' })
+    } catch (err) {
+      console.error(err)
+      setLoading(false)
+      enqueueSnackbar('Failed to claim parent revenue', { variant: 'error' })
     }
   }
 
@@ -158,7 +160,7 @@ const ListingComp: React.FC<Props> = ({ nftAddress }) => {
     <>
       <div style={{ width: '100%', height: '100%' }}>
         <Box px='24px' height='100%' sx={{ paddingBottom: '18px', background: '#0a080f', borderTopRightRadius: '10px', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px' }}>
-          <Box>
+          {/* <Box>
             <Box>
               <Controller
                 name="amountOnusd"
@@ -190,11 +192,11 @@ const ListingComp: React.FC<Props> = ({ nftAddress }) => {
                 )}
               />
             </Box>
-          </Box>
+          </Box> */}
 
           <Box height='100%'>
 
-            <Box mt='15px' mb='5px'>
+            {/* <Box mt='15px' mb='5px'>
               {isValid ? <ActionButton onClick={handleSubmit(onConfirm)} disabled={loading} sx={loading ? { border: '1px solid #c4b5fd' } : {}}>
                 {!loading ?
                   <Typography variant='p_xlg'>Listing</Typography>
@@ -208,8 +210,16 @@ const ListingComp: React.FC<Props> = ({ nftAddress }) => {
                   <Typography variant='p_xlg'>{invalidMsg()}</Typography>
                 </DisableButton>
               }
-            </Box>
-            <BuyBtn onClick={() => onClaim()} disabled={!wallet?.account.address}>Claim Revenue</BuyBtn>
+            </Box> */}
+            <BuyBtn onClick={() => onClaimParent()} disabled={!wallet?.account.address}>
+              {!loading ?
+                <Typography variant='p_xlg'>Claim Revenue</Typography>
+                :
+                <Stack direction='row' alignItems='center' gap={2}>
+                  <CircularProgress sx={{ color: '#c4b5fd' }} size={15} thickness={4} />
+                  <Typography variant='p_xlg' color='#fff'>Progressing</Typography>
+                </Stack>}
+            </BuyBtn>
 
             <Link
               href={`https://aeneid.storyscan.xyz/tx/${txHash}`}

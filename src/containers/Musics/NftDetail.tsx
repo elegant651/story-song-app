@@ -55,17 +55,17 @@ const NftDetail = ({ nftAddress, listingAddress, isOwner }: { nftAddress: string
           <OverviewWrapper>
             <Typography variant='h3' fontWeight={500}>NFT Overview</Typography>
             <Stack direction={isMobileOnSize ? "column" : "row"} justifyContent="flex-start" spacing={isMobileOnSize ? 3 : 9} mt='25px'>
-              <Box width='160px'>
+              {/* <Box width='160px'>
                 <Box><Typography variant='p' color='#8988a3'>Price</Typography></Box>
                 <Box mt='8px'>
                   <Typography variant='h3' fontWeight={500} whiteSpace='nowrap'>{assetData.price} APT</Typography>
                 </Box>
-              </Box>
+              </Box> */}
               <Box width='160px'>
                 <Box><Typography variant='p' color='#8988a3'>Seller address</Typography></Box>
                 <Box mt='8px'>
                   <Link
-                    href={`https://explorer.aptoslabs.com/object/${assetData.seller_address}?network=testnet`}
+                    href={`https://aeneid.storyscan.io/address/${assetData.seller_address}`}
                     rel="noopener noreferrer"
                     target="_blank"
                   ><Typography variant='p_xlg' fontWeight={500} whiteSpace='nowrap'>{assetData.seller_address.slice(0, 10)}...{assetData.seller_address.slice(-10)}</Typography></Link>

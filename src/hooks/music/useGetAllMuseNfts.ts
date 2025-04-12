@@ -14,13 +14,19 @@ export type MuseNft = {
 }
 
 export const NFTs = [{
-  id: 'fc102432-9f06-44a5-841e-773baacec045',
+  id: '849d810a-9cf4-4477-8bf3-de69c40ecc4b',
+  title: 'Sky High Dreams',
+  image_url: 'https://cdn2.suno.ai/image_849d810a-9cf4-4477-8bf3-de69c40ecc4b.jpeg',
+  audio_url: 'https://cdn1.suno.ai/849d810a-9cf4-4477-8bf3-de69c40ecc4b.mp3',
+  video_url: 'https://cdn1.suno.ai/849d810a-9cf4-4477-8bf3-de69c40ecc4b.mp4',
+  created_at: '2024-10-12T05:53:46.390Z',
+  model_name: 'chirp-v3.5',
+  status: 'complete',
+  gpt_description_prompt: 'Ethereal, Pop-Rock, Piano, Harmonies, Catchy Melodies, Uplifting Rhythm',
+  type: 'gen',
+  tags: 'piano harmonies catchy melodies pop-rock uplifting rhythm ethereal',
   address: '0xfc1024329f0644a5841e773baacec045',
-  title: 'After the Thunder',
-  image_url: 'https://cdn2.suno.ai/image_fc102432-9f06-44a5-841e-773baacec045.jpeg',
-  audio_url: 'https://cdn1.suno.ai/fc102432-9f06-44a5-841e-773baacec045.mp3',
-  prompt: 'A popular heavy metal song about war, sung by a deep-voiced male singer, slowly and melodiously. The lyrics depict the sorrow of people after the war.',
-  tags: 'heavy metal slow melodic',
+  prompt: 'easy listening, dreams',
   price: 0,
   seller_address: '0xfc1024329f0644a5841e773baacec045'
 }]

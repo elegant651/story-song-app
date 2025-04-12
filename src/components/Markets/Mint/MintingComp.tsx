@@ -37,7 +37,8 @@ const MintingComp: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar()
   const { data: wallet } = useWalletClient()
   const [audioResult, setAudioResult] = useState<SunoResponse>()
-  // const [audioResult2, setAudioResult2] = useState<SunoResponse>()
+  const [ipId, setIpId] = useState<string | undefined>()
+
   const [prompt, setPrompt] = useState('')
   const {
     mintNFT,
@@ -50,7 +51,7 @@ const MintingComp: React.FC = () => {
   } = useStory();
 
   //https://audiopipe.suno.ai/?item_id=fc102432-9f06-44a5-841e-773baacec045
-  // const prompt = 'A popular heavy metal song about war, sung by a deep-voiced male singer, slowly and melodiously. The lyrics depict the sorrow of people after the war.'
+  // const prompt = 'Ethereal Trance, Progressive House, Epic Synths, Euphoric Melody, Fast Rhythm'
 
   const initData = () => {
     setPrompt('')
@@ -84,6 +85,37 @@ const MintingComp: React.FC = () => {
       console.error(err)
     } finally {
       setGenerating(false)
+    }
+  }
+
+  const IP_ID: Address = '0x55e733c020A74bF7e2544DDCa5475c3d2c844EE7'
+  const LICENSE_TERMS_ID: string = '95'
+  const onMintLicense = async () => {
+    try {
+      if (!client) return;
+      setLoading(true)
+      if (!wallet?.account) {
+        throw new Error("Wallet not connected");
+      }
+      if (!audioResult) {
+        throw new Error("No audio result");
+      }
+
+      const response = await client.license.attachLicenseTerms({
+        licenseTermsId: LICENSE_TERMS_ID,
+        ipId: IP_ID,
+        txOptions: { waitForTransaction: true },
+      });
+
+      console.log('License attached:', {
+        'Transaction Hash': response.txHash,
+      })
+      setTxHash(response.txHash as string);
+      enqueueSnackbar(`Minted License`)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -175,6 +207,7 @@ const MintingComp: React.FC = () => {
       );
       setTxLoading(false);
       setTxHash(response.txHash as string);
+      setIpId(response.ipId)
       addTransaction(response.txHash as string, "Register IPA", {
         ipId: response.ipId,
       });
@@ -188,11 +221,6 @@ const MintingComp: React.FC = () => {
       setLoading(false)
     }
   }
-
-  // TODO: This is Ippy on Aeneid. The license terms specify 1 $WIP mint fee
-  // and a 5% commercial rev share. You can change these.
-  const PARENT_IP_ID: Address = '0x641E638e8FCA4d4844F509630B34c9D524d40BE5'
-  const PARENT_LICENSE_TERMS_ID: string = '96'
 
   const onConfirmMintDerivative = async () => {
     try {
@@ -270,8 +298,8 @@ const MintingComp: React.FC = () => {
       const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
         spgNftContract: SPG_NFT_CONTRACT_ADDRESS,
         derivData: {
-          parentIpIds: [PARENT_IP_ID],
-          licenseTermsIds: [PARENT_LICENSE_TERMS_ID],
+          parentIpIds: [IP_ID],
+          licenseTermsIds: [LICENSE_TERMS_ID],
         },
         // NOTE: The below metadata is not configured properly. It is just to make things simple.
         // See `simpleMintAndRegister.ts` for a proper example.
@@ -289,6 +317,7 @@ const MintingComp: React.FC = () => {
       })
       setTxLoading(false);
       setTxHash(response.txHash as string);
+      setIpId(response.ipId)
       addTransaction(response.txHash as string, "Register IPA", {
         ipId: response.ipId,
       });
@@ -317,7 +346,7 @@ const MintingComp: React.FC = () => {
               </Stack>
               <FormStack direction="row" justifyContent="space-between" alignItems="center" mt='10px'>
                 <Box display='flex' flexDirection='column' alignItems='flex-start' pl='5px'>
-                  <InputPrompt id="ip-prompt" placeholder="A popular heavy metal song about aptos" maxLength={MAX_LENGTH_PROMPT} onChange={onChange} />
+                  <InputPrompt id="ip-prompt" placeholder="Ethereal Trance, Progressive House, Epic Synths..." maxLength={MAX_LENGTH_PROMPT} onChange={onChange} />
                 </Box>
               </FormStack>
             </FormControl>
@@ -351,6 +380,16 @@ const MintingComp: React.FC = () => {
             </Box>
 
             <Box my='5px'>
+              <SubmitButton onClick={onMintLicense} disabled={loading || !audioResult || !isValid} sx={loading ? { border: '1px solid #c4b5fd' } : {}}>
+                {!loading ?
+                  <Typography variant='p_xlg'>Mint License</Typography>
+                  :
+                  <Stack direction='row' alignItems='center' gap={2}>
+                    <CircularProgress sx={{ color: '#c4b5fd' }} size={15} thickness={4} />
+                    <Typography variant='p_xlg' color='#000'>Minting</Typography>
+                  </Stack>}
+              </SubmitButton>
+
               <SubmitButton onClick={onConfirmMintDerivative} disabled={loading || !audioResult || !isValid} sx={loading ? { border: '1px solid #c4b5fd' } : {}}>
                 {!loading ?
                   <Typography variant='p_xlg'>Mint</Typography>
@@ -361,10 +400,10 @@ const MintingComp: React.FC = () => {
                   </Stack>}
               </SubmitButton>
               <Link
-                href={`https://aeneid.explorer.story.foundation/ipa/${txHash}`}
+                href={`https://aeneid.explorer.story.foundation/ipa/${ipId}`}
                 rel="noopener noreferrer"
                 target="_blank"
-              ><Box mt='5px'>{txHash && <Typography variant='p_lg' color='#c4b5fd'>{txHash.slice(0, 10) + '...' + txHash.slice(txHash.length - 10)}</Typography>}</Box></Link>
+              ><Box mt='5px'>{ipId && <Typography variant='p_lg' color='#c4b5fd'>{ipId.slice(0, 10) + '...' + ipId.slice(ipId.length - 10)}</Typography>}</Box></Link>
             </Box>
           </Box>
         </Box>

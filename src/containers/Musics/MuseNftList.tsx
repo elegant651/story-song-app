@@ -52,18 +52,18 @@ const MuseNftList = () => {
 				)
 			},
 		},
-		{
-			field: 'price',
-			headerClassName: 'super-app-theme--header right--header',
-			cellClassName: 'super-app-theme--cell right--cell',
-			headerName: `price`,
-			flex: 3,
-			renderCell(params: GridRenderCellParams<string>) {
-				return <Box textAlign={isMobileOnSize ? 'right' : 'left'}>
-					<Typography variant='p_lg'>{params.value} APT</Typography>
-				</Box>
-			}
-		},
+		// {
+		// 	field: 'price',
+		// 	headerClassName: 'super-app-theme--header right--header',
+		// 	cellClassName: 'super-app-theme--cell right--cell',
+		// 	headerName: `price`,
+		// 	flex: 3,
+		// 	renderCell(params: GridRenderCellParams<string>) {
+		// 		return <Box textAlign={isMobileOnSize ? 'right' : 'left'}>
+		// 			<Typography variant='p_lg'>{params.value} APT</Typography>
+		// 		</Box>
+		// 	}
+		// },
 		{
 			field: 'tags',
 			headerClassName: 'super-app-theme--header right--header',
@@ -71,7 +71,7 @@ const MuseNftList = () => {
 			headerName: 'Tags',
 			flex: 3,
 			renderCell(params: GridRenderCellParams<string>) {
-				return <Typography variant='p' sx={{ color: '#8988a3', maxWidth: '200px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{params.value}</Typography>
+				return <Typography variant='p' sx={{ color: '#8988a3', maxWidth: '300px', textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}>{params.value}</Typography>
 			},
 		},
 		{
@@ -83,7 +83,7 @@ const MuseNftList = () => {
 
 			renderCell(params: GridRenderCellParams<string>) {
 				return <Link
-					href={`https://explorer.aptoslabs.com/object/${params.row.address}?network=testnet`}
+					href={`https://aeneid.explorer.story.foundation/ipa/${params.address}`}
 					rel="noopener noreferrer"
 					target="_blank"
 				><Typography variant='p_xlg' color='#c4b5fd'>View NFT</Typography></Link>

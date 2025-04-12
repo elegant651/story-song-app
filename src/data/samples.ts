@@ -2,6 +2,18 @@ import { MuseNft } from "~/hooks/music/useGetAllMuseNfts";
 
 export const songItems: MuseNft[] = [
   {
+    "audio_url": "https://cdn1.suno.ai/849d810a-9cf4-4477-8bf3-de69c40ecc4b.mp3",
+    "id": "849d810a-9cf4-4477-8bf3-de69c40ecc4b",
+    "image_url": "https://cdn2.suno.ai/image_849d810a-9cf4-4477-8bf3-de69c40ecc4b.jpeg",
+    "prompt": "Ethereal, Pop-Rock, Piano, Harmonies, Catchy Melodies, Uplifting Rhythm",
+    "tags": "piano harmonies catchy melodies pop-rock uplifting rhythm ethereal",
+    "title": "Sky High Dreams",
+    "price": 100,
+    "address": "0xfc1024329f0644a5841e773baacec045",
+    "seller_address": "0xfc1024329f0644a5841e773baacec045",
+    "listing_address": "0x3"
+  },
+  {
     "audio_url": "https://cdn1.suno.ai/22b845ce-fcae-4926-aff6-6af1335b977c.mp3",
     "id": "22b845ce-fcae-4926-aff6-6af1335b977c",
     "image_url": "https://cdn2.suno.ai/image_22b845ce-fcae-4926-aff6-6af1335b977c.jpeg",
@@ -20,18 +32,6 @@ export const songItems: MuseNft[] = [
     "prompt": "Electronic, Synth-Pop, Robotic Vocals, Repetitive Rhythms, Catchy Melodies, Retro-Futuristic Sound",
     "tags": "robotic vocals retro-futuristic sound catchy melodies synth-pop electronic repetitive rhythms",
     "title": "Electric Dreams",
-    "price": 100,
-    "address": "0xfc1024329f0644a5841e773baacec045",
-    "seller_address": "0xfc1024329f0644a5841e773baacec045",
-    "listing_address": "0x3"
-  },
-  {
-    "audio_url": "https://cdn1.suno.ai/849d810a-9cf4-4477-8bf3-de69c40ecc4b.mp3",
-    "id": "849d810a-9cf4-4477-8bf3-de69c40ecc4b",
-    "image_url": "https://cdn2.suno.ai/image_849d810a-9cf4-4477-8bf3-de69c40ecc4b.jpeg",
-    "prompt": "Ethereal, Pop-Rock, Piano, Harmonies, Catchy Melodies, Uplifting Rhythm",
-    "tags": "piano harmonies catchy melodies pop-rock uplifting rhythm ethereal",
-    "title": "Sky High Dreams",
     "price": 100,
     "address": "0xfc1024329f0644a5841e773baacec045",
     "seller_address": "0xfc1024329f0644a5841e773baacec045",

@@ -2,7 +2,7 @@ import { LoadingSkeleton } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { styled } from '@mui/material/styles'
 import { Box, Button, Typography } from "@mui/material"
-import { APT, aptos, getAptBalance, getMusesong } from '~/contract/contracts'
+import { getMusesong } from '~/contract/contracts'
 import { useEffect, useState } from "react"
 import { ABI } from "~/contract/abi_marketplace"
 import Link from "next/link"
@@ -54,11 +54,6 @@ const ViewNFTComp: React.FC<Props> = () => {
             <img src={assetData.image_url} width={100} alt={assetData.title} style={{ borderRadius: '10px' }} />
             <Box ml='16px'>
               <Typography variant='h3' fontWeight={500} color='#8988a3'>{assetData.title}</Typography>
-              {/* <Link
-                href={`https://explorer.aptoslabs.com/object/${assetData.address}?network=testnet`}
-                rel="noopener noreferrer"
-                target="_blank"
-              ><Typography variant="p_lg" fontWeight={300}>{assetData.address}</Typography></Link> */}
             </Box>
           </Box>
         </Box>

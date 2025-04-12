@@ -71,7 +71,7 @@ const MarketList = () => {
 
 			renderCell(params: GridRenderCellParams<string>) {
 				return <Link
-					href={`https://explorer.aptoslabs.com/object/${params.address}?network=testnet`}
+					href={`https://aeneid.explorer.story.foundation/ipa/${params.address}`}
 					rel="noopener noreferrer"
 					target="_blank"
 				><Typography variant='p_xlg' color='#c4b5fd'>View NFT</Typography></Link>
