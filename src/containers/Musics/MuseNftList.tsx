@@ -15,7 +15,6 @@ import { useGetAllListedNfts } from '~/hooks/useGetAllListedNfts'
 
 const MuseNftList = () => {
 	const router = useRouter()
-	const filter: FilterType = 'all'
 
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 
@@ -93,19 +92,6 @@ const MuseNftList = () => {
 	]
 
 	columns = columns.map((col) => Object.assign(col, { hideSortIcons: true, filterable: false }))
-
-	// const handleFilterChange = (event: React.SyntheticEvent, newValue: FilterType) => {
-	// 	setFilter(newValue)
-	// }
-
-	// const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-	// 	const newVal = e.currentTarget.value
-	// 	if (newVal) {
-	// 		setSearchTerm(newVal)
-	// 	} else {
-	// 		setSearchTerm('')
-	// 	}
-	// }, [searchTerm])
 
 	const handleRowClick: GridEventListener<'rowClick'> = useCallback((
 		params

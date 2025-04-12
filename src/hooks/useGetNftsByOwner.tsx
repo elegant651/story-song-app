@@ -1,4 +1,4 @@
-import { getMusesongWithTokenAddr, getUserOwnedMusesongs } from "~/aptos/contracts";
+import { getMusesongWithTokenAddr, getUserOwnedMusesongs } from "~/contract/contracts";
 import { useEffect, useState } from "react";
 import { MuseNft } from "./music/useGetAllMuseNfts";
 

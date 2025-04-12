@@ -4,7 +4,6 @@ import { styled } from '@mui/material/styles'
 import { useGetMuseNft } from '~/hooks/music/useGetMuseNft'
 import AudioVizPlayer from '~/components/Music/AudioVizPlayer'
 import Link from 'next/link'
-import { useGetMyGeneratedNft } from '~/hooks/music/useGetMyGeneratedNft'
 import { useAccount, useWalletClient } from 'wagmi'
 import { useGetNft } from '~/hooks/useGetNft'
 
@@ -12,7 +11,7 @@ const NftDetail = ({ nftAddress, listingAddress, isOwner }: { nftAddress: string
   const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
   const { data: wallet } = useWalletClient()
 
-  const assetData = isOwner ? useGetMyGeneratedNft(wallet?.account?.address, nftAddress) : useGetNft(listingAddress, nftAddress)  //useGetMuseNft(nftAddress)
+  const assetData = useGetMuseNft(nftAddress)
 
 
   // useEffect(() => {

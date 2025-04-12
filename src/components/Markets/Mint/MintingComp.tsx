@@ -6,15 +6,16 @@ import oneWaySwapIcon from 'public/images/oneway-swap.svg'
 import { LoadingProgress } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { SubmitButton } from '../../Common/CommonButtons'
-import { MUSESONG_CONTRACT_ADDRESS } from "~/aptos/contracts";
 import AudioVizPlayer from '~/components/Music/AudioVizPlayer'
 import { useSnackbar } from 'notistack'
 import Link from 'next/link'
 import { useWalletClient } from 'wagmi'
-
-interface Props {
-
-}
+import { useStory } from '~/hocs/StoryAppContext'
+import { IpMetadata } from '@story-protocol/core-sdk'
+import CryptoJS from "crypto-js";
+import { Address } from 'viem'
+import { uploadJSONToIPFS } from '~/utils/functions/uploadToIpfs'
+import { SPG_NFT_CONTRACT_ADDRESS } from '~/abi/constants'
 
 type SunoResponse = {
   id: string
@@ -30,7 +31,7 @@ type SunoResponse = {
 
 const MAX_LENGTH_PROMPT = 120
 
-const MintingComp: React.FC<Props> = () => {
+const MintingComp: React.FC = () => {
   const [generating, setGenerating] = useState(false)
   const [loading, setLoading] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -38,10 +39,15 @@ const MintingComp: React.FC<Props> = () => {
   const [audioResult, setAudioResult] = useState<SunoResponse>()
   // const [audioResult2, setAudioResult2] = useState<SunoResponse>()
   const [prompt, setPrompt] = useState('')
-  const [txHash, setTxHash] = useState('')
-
-  // const config = new AptosConfig({ network: Network.TESTNET });
-  // const aptosClient = new Aptos(config);
+  const {
+    mintNFT,
+    txHash,
+    setTxHash,
+    setTxLoading,
+    setTxName,
+    addTransaction,
+    client,
+  } = useStory();
 
   //https://audiopipe.suno.ai/?item_id=fc102432-9f06-44a5-841e-773baacec045
   // const prompt = 'A popular heavy metal song about war, sung by a deep-voiced male singer, slowly and melodiously. The lyrics depict the sorrow of people after the war.'
@@ -91,23 +97,204 @@ const MintingComp: React.FC<Props> = () => {
         throw new Error("No audio result");
       }
 
-      // const response = await signAndSubmitTransaction({
-      //   sender: wallet?.account?.address,
-      //   data: {
-      //     function: `${MUSESONG_CONTRACT_ADDRESS}::main::create_musesong`,
-      //     typeArguments: [],
-      //     functionArguments: [audioResult.id, audioResult.title, audioResult.gpt_description_prompt, audioResult.image_url, audioResult.audio_url, audioResult.tags],
-      //   },
-      // });
-      // await aptosClient.waitForTransaction({
-      //   transactionHash: response.hash,
-      // });
-      // if (response) {
-      //   setTxHash(response.hash)
-      //   console.log("Minted");
-      //   initData()
-      //   enqueueSnackbar(`Minted NFT`)
-      // }
+      if (!client) return;
+      setTxLoading(true);
+      setTxName("Uploading data to IPFS...");
+
+      /* IP data */
+      const ipData: IpMetadata = client.ipAsset.generateIpMetadata({
+        title: audioResult.title,
+        description: audioResult.gpt_description_prompt,
+        image: audioResult.image_url,
+        imageHash: `0x${CryptoJS.SHA256(JSON.stringify(audioResult.image_url)).toString(
+          CryptoJS.enc.Hex
+        )}`,
+        mediaUrl: audioResult.audio_url,
+        mediaHash: `0x${CryptoJS.SHA256(JSON.stringify(audioResult.audio_url)).toString(
+          CryptoJS.enc.Hex
+        )}`,
+        mediaType: "audio/mpeg",
+        creators: [
+          {
+            name: "Test Creator",
+            contributionPercent: 100,
+            address: wallet?.account.address as Address,
+          },
+        ],
+      });
+
+      // Set up NFT Metadata
+      const nftMetadata = {
+        name: audioResult.title,
+        description: audioResult.gpt_description_prompt,
+        image: audioResult.image_url,
+        animation_url: audioResult.audio_url,
+        attributes: [
+          {
+            key: 'Suno Artist',
+            value: 'trilemma',
+          },
+          {
+            key: 'Song ID',
+            value: audioResult.id,
+          },
+          {
+            key: 'Source',
+            value: 'Suno.com',
+          },
+          {
+            key: 'Tags',
+            value: audioResult.tags,
+          }
+        ],
+      }
+
+      const ipIpfsCid = await uploadJSONToIPFS(ipData);
+      const ipMetadataHash = CryptoJS.SHA256(JSON.stringify(ipData)).toString(
+        CryptoJS.enc.Hex
+      );
+      const nftIpfsCid = await uploadJSONToIPFS(nftMetadata)
+      const nftMetadataHash = CryptoJS.SHA256(JSON.stringify(nftMetadata)).toString(
+        CryptoJS.enc.Hex
+      );
+
+      // register IPA
+      setTxName("Minting and registering an IP Asset...");
+      const response = await client.ipAsset.mintAndRegisterIp({
+        spgNftContract: SPG_NFT_CONTRACT_ADDRESS,
+        ipMetadata: {
+          ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsCid}`, // uri of IP metadata
+          ipMetadataHash: `0x${ipMetadataHash}`, // hash of IP metadata
+          nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsCid}`, // uri of NFT metadata
+          nftMetadataHash: `0x${nftMetadataHash}`, // hash of NFT metadata
+        },
+        txOptions: { waitForTransaction: true },
+      });
+      console.log(
+        `Root IPA created at tx hash ${response.txHash}, IPA ID: ${response.ipId}`
+      );
+      setTxLoading(false);
+      setTxHash(response.txHash as string);
+      addTransaction(response.txHash as string, "Register IPA", {
+        ipId: response.ipId,
+      });
+      enqueueSnackbar(`Minted NFT`)
+      initData()
+
+    } catch (err) {
+      console.error(err)
+      enqueueSnackbar(`Rejected`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // TODO: This is Ippy on Aeneid. The license terms specify 1 $WIP mint fee
+  // and a 5% commercial rev share. You can change these.
+  const PARENT_IP_ID: Address = '0x641E638e8FCA4d4844F509630B34c9D524d40BE5'
+  const PARENT_LICENSE_TERMS_ID: string = '96'
+
+  const onConfirmMintDerivative = async () => {
+    try {
+      setLoading(true)
+      if (!wallet?.account) {
+        throw new Error("Wallet not connected");
+      }
+      if (!audioResult) {
+        throw new Error("No audio result");
+      }
+
+      if (!client) return;
+      setTxLoading(true);
+      setTxName("Uploading data to IPFS...");
+
+      /* IP data */
+      const ipData: IpMetadata = client.ipAsset.generateIpMetadata({
+        title: audioResult.title,
+        description: audioResult.gpt_description_prompt,
+        image: audioResult.image_url,
+        imageHash: `0x${CryptoJS.SHA256(JSON.stringify(audioResult.image_url)).toString(
+          CryptoJS.enc.Hex
+        )}`,
+        mediaUrl: audioResult.audio_url,
+        mediaHash: `0x${CryptoJS.SHA256(JSON.stringify(audioResult.audio_url)).toString(
+          CryptoJS.enc.Hex
+        )}`,
+        mediaType: "audio/mpeg",
+        creators: [
+          {
+            name: "Test Creator",
+            contributionPercent: 100,
+            address: wallet?.account.address as Address,
+          },
+        ],
+      });
+
+      // Set up NFT Metadata
+      const nftMetadata = {
+        name: audioResult.title,
+        description: audioResult.gpt_description_prompt,
+        image: audioResult.image_url,
+        animation_url: audioResult.audio_url,
+        attributes: [
+          {
+            key: 'Suno Artist',
+            value: 'trilemma',
+          },
+          {
+            key: 'Song ID',
+            value: audioResult.id,
+          },
+          {
+            key: 'Source',
+            value: 'Suno.com',
+          },
+          {
+            key: 'Tags',
+            value: audioResult.tags,
+          }
+        ],
+      }
+
+      const ipIpfsCid = await uploadJSONToIPFS(ipData);
+      const ipMetadataHash = CryptoJS.SHA256(JSON.stringify(ipData)).toString(
+        CryptoJS.enc.Hex
+      );
+      const nftIpfsCid = await uploadJSONToIPFS(nftMetadata)
+      const nftMetadataHash = CryptoJS.SHA256(JSON.stringify(nftMetadata)).toString(
+        CryptoJS.enc.Hex
+      );
+
+      // register IPA
+      setTxName("Minting and registering an IP Asset...");
+      const response = await client.ipAsset.mintAndRegisterIpAndMakeDerivative({
+        spgNftContract: SPG_NFT_CONTRACT_ADDRESS,
+        derivData: {
+          parentIpIds: [PARENT_IP_ID],
+          licenseTermsIds: [PARENT_LICENSE_TERMS_ID],
+        },
+        // NOTE: The below metadata is not configured properly. It is just to make things simple.
+        // See `simpleMintAndRegister.ts` for a proper example.
+        ipMetadata: {
+          ipMetadataURI: `https://ipfs.io/ipfs/${ipIpfsCid}`, // uri of IP metadata
+          ipMetadataHash: `0x${ipMetadataHash}`, // hash of IP metadata
+          nftMetadataURI: `https://ipfs.io/ipfs/${nftIpfsCid}`, // uri of NFT metadata
+          nftMetadataHash: `0x${nftMetadataHash}`, // hash of NFT metadata
+        },
+        txOptions: { waitForTransaction: true },
+      })
+      console.log('Derivative IPA created and linked:', {
+        'Transaction Hash': response.txHash,
+        'IPA ID': response.ipId,
+      })
+      setTxLoading(false);
+      setTxHash(response.txHash as string);
+      addTransaction(response.txHash as string, "Register IPA", {
+        ipId: response.ipId,
+      });
+      enqueueSnackbar(`Minted NFT`)
+      initData()
+
     } catch (err) {
       console.error(err)
       enqueueSnackbar(`Rejected`)
@@ -139,7 +326,7 @@ const MintingComp: React.FC<Props> = () => {
           <Box height='100%'>
             <Image src={oneWaySwapIcon} alt="swap" />
 
-            <Box><Typography variant='p'>(Noted) for test version, import music already prepared.</Typography></Box>
+            {/* <Box><Typography variant='p'>(Noted) for test version, import music already prepared.</Typography></Box> */}
             <Box>
               <SubmitButton onClick={onGenerate} sx={loading ? { border: '1px solid #c4b5fd' } : {}} disabled={loading || !isValid || audioResult}>
                 {!generating ?
@@ -164,7 +351,7 @@ const MintingComp: React.FC<Props> = () => {
             </Box>
 
             <Box my='5px'>
-              <SubmitButton onClick={onConfirmMint} disabled={loading || !audioResult || !isValid} sx={loading ? { border: '1px solid #c4b5fd' } : {}}>
+              <SubmitButton onClick={onConfirmMintDerivative} disabled={loading || !audioResult || !isValid} sx={loading ? { border: '1px solid #c4b5fd' } : {}}>
                 {!loading ?
                   <Typography variant='p_xlg'>Mint</Typography>
                   :
@@ -174,7 +361,7 @@ const MintingComp: React.FC<Props> = () => {
                   </Stack>}
               </SubmitButton>
               <Link
-                href={`https://explorer.aptoslabs.com/txn/${txHash}?network=testnet`}
+                href={`https://aeneid.explorer.story.foundation/ipa/${txHash}`}
                 rel="noopener noreferrer"
                 target="_blank"
               ><Box mt='5px'>{txHash && <Typography variant='p_lg' color='#c4b5fd'>{txHash.slice(0, 10) + '...' + txHash.slice(txHash.length - 10)}</Typography>}</Box></Link>

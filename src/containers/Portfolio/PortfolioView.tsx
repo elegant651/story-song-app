@@ -19,10 +19,10 @@ const PortfolioView = () => {
 	const { data: wallet } = useWalletClient()
 	// const [dataPie, setDataPie] = useState<PieItem[]>([])
 
-	// const nftsInWallet = useGetMuseNftsByOwner(account?.address);
-	const nftsInWallet = useGetNftsByOwner(wallet?.account?.address);
-	// const nftsListed = useGetListedMuseNftsBySeller(account?.address);
-	const nftsListed = useGetListedNftsBySeller(wallet?.account?.address);
+	const nftsInWallet = useGetMuseNftsByOwner(wallet?.account?.address);
+	// const nftsInWallet = useGetNftsByOwner(wallet?.account?.address);
+	const nftsListed = useGetListedMuseNftsBySeller(wallet?.account?.address);
+	// const nftsListed = useGetListedNftsBySeller(wallet?.account?.address);
 
 	return (
 		<div>
@@ -33,9 +33,9 @@ const PortfolioView = () => {
 				<Box>
 					<OnAssetList assets={nftsInWallet} isListed={false} title='My Owned NFTs' />
 				</Box>
-				<Box my='30px'>
+				{/* <Box my='30px'>
 					<OnAssetList assets={nftsListed} isListed={true} title='My Listed NFTs' />
-				</Box>
+				</Box> */}
 			</Box>
 		</div>
 	)

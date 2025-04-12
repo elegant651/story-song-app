@@ -4,7 +4,7 @@ import {
   getListingObjectAndSeller,
   getListingObjectPrice,
   getMusesongWithTokenAddr,
-} from "~/aptos/contracts";
+} from "~/contract/contracts";
 import { useEffect, useState } from "react";
 import { MuseNft } from "./music/useGetAllMuseNfts";
 

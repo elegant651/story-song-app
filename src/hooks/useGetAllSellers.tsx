@@ -1,4 +1,4 @@
-import { getAllSellers } from "~/aptos/contracts";
+import { getAllSellers } from "~/contract/contracts";
 import { useEffect, useState } from "react";
 
 export const useGetAllSellers = () => {

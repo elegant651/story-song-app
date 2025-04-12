@@ -10,6 +10,7 @@ import { TransactionStateProvider } from '~/hocs/TransactionStateProvider'
 import ErrorBoundary from '~/components/ErrorBoundary'
 import { SnackbarProvider } from 'notistack'
 import { styled } from '@mui/material/styles'
+import StoryAppProvider from '~/hocs/StoryAppContext'
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,25 +18,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <ThemeProvider theme={theme}>
         <ClientWalletProvider>
           <TransactionStateProvider>
-            <SnackbarProvider maxSnack={3}>
-              <ErrorBoundary>
-                <Box sx={{ display: 'flex', backgroundColor: '#0f0e14' }}>
-                  <CssBaseline />
-                  <GNB />
+            <StoryAppProvider>
+              <SnackbarProvider maxSnack={3}>
+                <ErrorBoundary>
+                  <Box sx={{ display: 'flex', backgroundColor: '#0f0e14' }}>
+                    <CssBaseline />
+                    <GNB />
 
-                  <Box
-                    component="main"
-                    sx={{
-                      flexGrow: 1,
-                      height: '100vh',
-                      overflow: 'auto',
-                    }}>
-                    {children}
+                    <Box
+                      component="main"
+                      sx={{
+                        flexGrow: 1,
+                        height: '100vh',
+                        overflow: 'auto',
+                      }}>
+                      {children}
+                    </Box>
+                    {/* {IS_DEV && isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />} */}
                   </Box>
-                  {/* {IS_DEV && isOpenInit && <InitEnterScreen onClose={() => setIsOpenInit(false)} />} */}
-                </Box>
-              </ErrorBoundary>
-            </SnackbarProvider>
+                </ErrorBoundary>
+              </SnackbarProvider>
+            </StoryAppProvider>
           </TransactionStateProvider>
         </ClientWalletProvider>
       </ThemeProvider>

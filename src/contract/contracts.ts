@@ -1,20 +1,10 @@
-// import { Aptos, AptosConfig, Network, Account } from "@aptos-labs/ts-sdk";
 export const MUSESONG_CONTRACT_ADDRESS =
   "0x8e9ca6ae761c8b89c140d73d85ce2c6a8a8066d4ebf33bae0f92a8ba264c04ad";
 
 //marketplace
-// export const MARKETPLACE_CONTRACT_ADDRESS = "0xaca573fbecfceb40c4b89448c6e2d284479eae59992f967552fbcc7e8633bf53";
 export const COLLECTION_ID = "0xbcbf7cfa9d9c89b3f846801a1765e700cf2c3843f2053e48521ea0127bd919bd"; // retrieve from get_musesong_collection_address() at musenft contract
 export const COLLECTION_CREATOR_ADDRESS = "0x6a54ac5beae5658d8236589332ff1b6fb25ce1eabe0601dacff64189f5d89bd6"; // retrieve from profile when deploying it to testnet
 export const COLLECTION_NAME = "MUSESONG Collection";
-
-export const APT = "0x1::aptos_coin::AptosCoin";
-export const APT_UNIT = 100_000_000;
-
-// const config = new AptosConfig({
-//   network: Network.TESTNET,
-// });
-// export const aptos = new Aptos(config);
 
 export const getMusesong = async (
   nftObjectAddr: string

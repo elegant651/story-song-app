@@ -2,9 +2,9 @@ import { LoadingSkeleton } from "~/components/Common/Loading"
 import withSuspense from "~/hocs/withSuspense"
 import { styled } from '@mui/material/styles'
 import { Box, Button, Typography } from "@mui/material"
-import { APT, aptos, getAptBalance, getMusesong } from '~/aptos/contracts'
+import { APT, aptos, getAptBalance, getMusesong } from '~/contract/contracts'
 import { useEffect, useState } from "react"
-import { ABI } from "~/aptos/abi_marketplace"
+import { ABI } from "~/contract/abi_marketplace"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { RootMarketsDir } from "~/utils/constants"

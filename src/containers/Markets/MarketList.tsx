@@ -1,7 +1,6 @@
 'use client'
 import { Box, Button, Theme, Typography, useMediaQuery } from '@mui/material'
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import { FilterType } from '~/data/filter'
 import { LoadingSkeleton } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { CustomNoRowsOverlay } from '~/components/Common/DataGrid'
@@ -15,7 +14,6 @@ import Link from 'next/link'
 
 const MarketList = () => {
 	const router = useRouter()
-	const filter: FilterType = 'all'
 
 	const isMobileOnSize = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'))
 

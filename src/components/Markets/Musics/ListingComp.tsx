@@ -2,16 +2,19 @@ import { Box, Stack, Button, IconButton, Typography, CircularProgress } from '@m
 import { styled } from '@mui/material/styles'
 import React, { useState, useEffect } from 'react'
 import PairInput from './PairInput'
-import { useForm, Controller } from 'react-hook-form
-import { APT, APT_UNIT, aptos, getAptBalance } from "~/aptos/contracts";
+import { useForm, Controller } from 'react-hook-form'
+import { getAptBalance } from "~/contract/contracts";
 import { ON_USD } from '~/utils/constants'
 import { LoadingSkeleton } from '~/components/Common/Loading'
 import withSuspense from '~/hocs/withSuspense'
 import { useSnackbar } from 'notistack'
-import { ABI } from '~/aptos/abi_marketplace'
+import { ABI } from '~/contract/abi_marketplace'
 import Link from 'next/link'
-import { useWalletClient } from 'wagmi'
-
+import { useWalletClient, useAccount } from 'wagmi'
+import { BuyBtn } from './BuyComp'
+import { useStory } from '~/hocs/StoryAppContext'
+import { Address } from 'viem'
+import { WIP_TOKEN_ADDRESS } from '@story-protocol/core-sdk'
 
 interface Props {
   nftAddress: string
@@ -20,10 +23,12 @@ interface Props {
 const ListingComp: React.FC<Props> = ({ nftAddress }) => {
   const [loading, setLoading] = useState(false)
   const { data: wallet } = useWalletClient()
+  const { isConnected } = useAccount()
   const snackbar = useSnackbar()
   const [openOrderDetails, setOpenOrderDetails] = useState(false)
   const [myBalance, setMyBalance] = useState(0)
   const [txHash, setTxHash] = useState('')
+  const { client } = useStory()
   const dollarPrice = 8.1
   // const { data: myBalance, refetch } = useMyBalanceQuery({
   //   userPubKey: account,
@@ -111,6 +116,30 @@ const ListingComp: React.FC<Props> = ({ nftAddress }) => {
     }
   }
 
+  const onClaim = async () => {
+    if (!client) return;
+    if (!wallet?.account) {
+      throw new Error("Wallet not connected");
+    }
+
+    try {
+      setLoading(true)
+
+      const childIpId = ''
+      const childClaimRevenue = await client.royalty.claimAllRevenue({
+        ancestorIpId: childIpId as Address,
+        claimer: wallet?.account.address as Address,
+        childIpIds: [],
+        royaltyPolicies: [],
+        currencyTokens: [WIP_TOKEN_ADDRESS],
+      })
+      console.log('Child claimed revenue:', childClaimRevenue.claimedTokens)
+    } catch (err) {
+      console.error(err)
+      setLoading(false)
+    }
+  }
+
   const invalidMsg = () => {
     if (amountOnusd == 0 || isNaN(amountOnusd) || !amountOnusd) {
       return 'Enter Amount'
@@ -155,7 +184,7 @@ const ListingComp: React.FC<Props> = ({ nftAddress }) => {
                     value={field.value}
                     dollarValue={field.value * dollarPrice}
                     balance={myBalance}
-                    balanceDisabled={!connected}
+                    balanceDisabled={!isConnected}
                     max={myBalance}
                   />
                 )}
@@ -180,16 +209,10 @@ const ListingComp: React.FC<Props> = ({ nftAddress }) => {
                 </DisableButton>
               }
             </Box>
-
-            <TitleOrderDetails onClick={() => setOpenOrderDetails(!openOrderDetails)} style={openOrderDetails ? { color: '#fff' } : { color: '#868686' }}>
-              <Box display='flex' alignItems='center'>
-                <Typography variant='p' color='#C4B5FD'>1 APT ≈ ${dollarPrice} {ON_USD}</Typography>
-              </Box>
-              {/* <Box display='flex' alignItems='center' mr='5px'><Typography variant='p' color='#c5c7d9'>Price Detail</Typography> <ArrowIcon>{openOrderDetails ? <KeyboardArrowUpSharpIcon /> : <KeyboardArrowDownSharpIcon />}</ArrowIcon></Box> */}
-            </TitleOrderDetails>
+            <BuyBtn onClick={() => onClaim()} disabled={!wallet?.account.address}>Claim Revenue</BuyBtn>
 
             <Link
-              href={`https://explorer.aptoslabs.com/txn/${txHash}?network=testnet`}
+              href={`https://aeneid.storyscan.xyz/tx/${txHash}`}
               rel="noopener noreferrer"
               target="_blank"
             ><Box mt='5px'>{txHash && <Typography variant='p_lg' color='#c4b5fd'>{txHash.slice(0, 10) + '...' + txHash.slice(-10)}</Typography>}</Box></Link>
