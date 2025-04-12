@@ -11,6 +11,8 @@ import { useWalletClient } from "wagmi"
 import { WIP_TOKEN_ADDRESS } from '@story-protocol/core-sdk'
 import { Address, parseEther, zeroAddress } from "viem"
 import { useStory } from "~/hocs/StoryAppContext"
+import { Controller, useForm } from "react-hook-form"
+import PairInput from "./PairInput"
 
 interface Props {
   nftAddress: string
@@ -23,6 +25,20 @@ const BuyComp: React.FC<Props> = ({ nftAddress, listingAddress }) => {
   const { client } = useStory()
   const [txHash, setTxHash] = useState('')
   const router = useRouter()
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch,
+    setValue,
+    trigger
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      amountOnusd: NaN,
+    }
+  })
 
   const onBuy = async (listing_object_address: string) => {
     if (!client) return;
@@ -56,13 +72,38 @@ const BuyComp: React.FC<Props> = ({ nftAddress, listingAddress }) => {
     <>
       <TitleOrderDetails>
         <Box display='flex' alignItems='center'>
-          <Typography variant='p' color='#C4B5FD'>2 $WIP</Typography>
+          {/* <Typography variant='p' color='#C4B5FD'>2 $WIP</Typography> */}
         </Box>
         {/* <Box display='flex' alignItems='center' mr='5px'>
           <Typography variant='p' color='#c5c7d9'>My Balance : </Typography>
           <Typography variant='p' color='#fff'>{myBalance.toLocaleString()} APT</Typography>
         </Box> */}
       </TitleOrderDetails>
+      <Box>
+        <Box>
+          <Controller
+            name="amountOnusd"
+            control={control}
+            rules={{
+              validate(value) {
+                if (!value || isNaN(value) || value <= 0) {
+                  return 'the amount should not empty'
+                }
+              }
+            }}
+            render={({ field }) => (
+              <PairInput
+                title="For Royalty"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  const usdiAmt = parseFloat(event.currentTarget.value)
+                  field.onChange(usdiAmt)
+                }}
+                value={field.value}
+              />
+            )}
+          />
+        </Box>
+      </Box>
       <BuyBtn onClick={() => onBuy(listingAddress)} disabled={!wallet?.account.address}>Pay Royalty</BuyBtn>
       <Link
         href={`https://aeneid.storyscan.xyz/tx/${txHash}`}

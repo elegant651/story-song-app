@@ -21,19 +21,15 @@ const PairInput: React.FC<Props> = ({ title, tickerIcon, balance, balanceDisable
 		<FormControl variant="standard" sx={{ width: '100%' }}>
 			<Stack direction="row" justifyContent="space-between">
 				<Box><Typography variant='p_lg' color='#8988a3'>{title}</Typography></Box>
-				{!balanceDisabled ? <Box display='flex' alignItems='center'>
-					<Typography variant='p' color='#8988a3'>Balance: </Typography> <Typography variant='p' color='#c5c7d9' ml='5px'>{formatLocaleAmount(balance, 4)}</Typography>
-				</Box> : <></>}
 			</Stack>
 			<FormStack direction="row" justifyContent="space-between" alignItems="center">
 				<Box display='flex' flexDirection='column' alignItems='flex-start' pl='5px' sx={valueDisabled ? { cursor: 'not-allowed' } : { cursor: 'default' }}>
 					<InputAmount id="ip-amount" type="number" sx={value && value > 0 ? { color: '#fff' } : { color: '#8988a3' }} placeholder="0.00" min={0} max={max} value={value} disabled={valueDisabled} onChange={onChange} />
-					<Box><Typography variant='p' color='#8988a3'>${!dollarValue || isNaN(dollarValue) ? 0 : formatLocaleAmount(dollarValue)}</Typography></Box>
 				</Box>
 				<TickerBox>
 					{tickerIcon && <Image src={tickerIcon} width={22} height={22} alt={''} />}
 					<Box mx='4px' display='flex' alignItems='center'>
-						<Typography variant='h4' color='#fff'>APT</Typography>
+						<Typography variant='h4' color='#fff'>WIP</Typography>
 					</Box>
 				</TickerBox>
 			</FormStack>
